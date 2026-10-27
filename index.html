@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07080b">
+  <meta name="description" content="Chrono — a calm, keyboard-first calendar workspace for focused work.">
+  <title>Chrono — Calendar OS</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23090a0d'/%3E%3Ccircle cx='16' cy='16' r='8' stroke='%23c9f56d' stroke-width='2' fill='none'/%3E%3Cellipse cx='16' cy='16' rx='12.5' ry='5' transform='rotate(-28 16 16)' stroke='%23c9f56d' stroke-opacity='.55' stroke-width='1.4' fill='none'/%3E%3Ccircle cx='23' cy='9.5' r='2.6' fill='%23c9f56d'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-aurora" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  <div class="app" id="app">
+    <aside class="rail" aria-label="Primary">
+      <button class="brand" id="brandBtn" title="Chrono — go to today" aria-label="Chrono home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="7.2" stroke="currentColor" stroke-width="1.8"/>
+          <ellipse cx="12" cy="12" rx="10.5" ry="4.2" transform="rotate(-28 12 12)" stroke="currentColor" stroke-width="1.2" opacity=".55"/>
+          <circle cx="18.4" cy="7.1" r="2.1" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <nav class="rail-nav">
+        <button class="rail-btn" data-view="day" data-tip="Day plan" aria-label="Day">
+          <span data-icon="day"></span>
+        </button>
+        <button class="rail-btn active" data-view="week" data-tip="Week" aria-label="Week">
+          <span data-icon="week"></span>
+        </button>
+        <button class="rail-btn" data-view="month" data-tip="Month" aria-label="Month">
+          <span data-icon="month"></span>
+        </button>
+        <button class="rail-btn" data-view="insights" data-tip="Insights" aria-label="Insights">
+          <span data-icon="insights"></span>
+        </button>
+      </nav>
+
+      <div class="rail-bottom">
+        <button class="rail-btn" id="focusRail" data-tip="Focus" aria-label="Focus">
+          <span data-icon="target"></span>
+        </button>
+        <button class="rail-btn" id="paletteRail" data-tip="Command · ⌘K" aria-label="Command palette">
+          <span data-icon="command"></span>
+        </button>
+        <div class="avatar" title="Alex Rivera" aria-hidden="true">AR<span class="avatar-dot"></span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title-block">
+          <div class="eyebrow" id="eyebrow">Week 44</div>
+          <div class="title-row">
+            <h1 id="viewTitle">October 2026</h1>
+            <span class="today-badge" id="todayBadge" hidden>Today</span>
+          </div>
+          <div class="view-meta" id="viewMeta"></div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="nav-cluster">
+            <button class="icon-btn" id="prevBtn" aria-label="Previous" title="Previous">
+              <span data-icon="chevronLeft"></span>
+            </button>
+            <button class="text-btn" id="todayBtn">Today</button>
+            <button class="icon-btn" id="nextBtn" aria-label="Next" title="Next">
+              <span data-icon="chevronRight"></span>
+            </button>
+          </div>
+
+          <button class="focus-chip" id="focusChip" hidden>
+            <span class="focus-chip-dot"></span>
+            <span class="focus-chip-time" id="focusChipTime">25:00</span>
+            <span class="focus-chip-label" id="focusChipLabel">Focus</span>
+          </button>
+
+          <button class="search-btn" id="searchBtn" aria-label="Search and commands">
+            <span data-icon="search" data-size="16"></span>
+            <span class="search-label">Search</span>
+            <kbd>⌘K</kbd>
+          </button>
+
+          <button class="icon-btn panel-btn" id="panelBtn" aria-label="Toggle task panel" title="Toggle task panel">
+            <span data-icon="panel"></span>
+          </button>
+
+          <button class="primary-btn" id="newEventBtn">
+            <span data-icon="plus" data-size="16"></span>
+            <span>New event</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="stage" id="stage" aria-live="polite"></section>
+    </main>
+
+    <aside class="panel" id="panel" aria-label="Now and tasks">
+      <div class="panel-head">
+        <span class="panel-eyebrow">Now</span>
+        <span class="panel-clock" id="panelClock">--:--</span>
+      </div>
+
+      <div id="nowCard"></div>
+      <div class="panel-stats" id="panelStats"></div>
+
+      <section class="panel-section" aria-label="Tasks">
+        <div class="section-head">
+          <h2>Tasks</h2>
+          <span class="count-badge" id="taskCount">0</span>
+        </div>
+        <form class="task-add" id="taskForm" autocomplete="off">
+          <input id="taskInput" placeholder="Add a task…" maxlength="90" aria-label="New task">
+          <button type="submit" aria-label="Add task">
+            <span data-icon="plus" data-size="15"></span>
+          </button>
+        </form>
+        <div class="task-list" id="taskList"></div>
+      </section>
+
+      <section class="focus-tile" aria-label="Focus timer">
+        <div class="focus-tile-head">
+          <span class="focus-orb"><span data-icon="target" data-size="17"></span></span>
+          <div>
+            <h2>Focus</h2>
+            <p>One thing at a time.</p>
+          </div>
+        </div>
+        <div class="focus-tile-stats">
+          <span id="focusWeek">0h</span>
+          <small>focused this week</small>
+        </div>
+        <div class="mini-progress"><span id="focusWeekBar"></span></div>
+        <button class="primary-btn wide" id="startFocusBtn">
+          <span data-icon="play" data-size="14"></span>
+          <span>Start focus</span>
+        </button>
+      </section>
+
+      <div class="panel-foot">Chrono · local-first <kbd>⌘K</kbd></div>
+    </aside>
+  </div>
+
+  <div class="panel-scrim" id="panelScrim" hidden></div>
+
+  <div class="overlay palette-layer" id="paletteLayer" hidden>
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="palette-input-wrap">
+        <span data-icon="search" data-size="18"></span>
+        <input id="paletteInput" placeholder="Jump to a day, event, or action…" autocomplete="off" spellcheck="false" aria-label="Search commands">
+        <kbd>esc</kbd>
+      </div>
+      <div class="palette-results" id="paletteResults"></div>
+      <div class="palette-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay modal-layer" id="modalLayer" hidden>
+    <form class="editor" id="eventForm" novalidate>
+      <header class="editor-head">
+        <span class="editor-kicker" id="editorKicker">New event</span>
+        <button type="button" class="icon-btn" id="modalClose" aria-label="Close editor">
+          <span data-icon="x" data-size="17"></span>
+        </button>
+      </header>
+
+      <input class="title-input" id="evTitle" placeholder="What’s happening?" maxlength="90" aria-label="Event title">
+
+      <div class="type-chips" id="typeChips" role="group" aria-label="Event type">
+        <button type="button" class="type-chip" data-type="meeting"><i></i>Meeting</button>
+        <button type="button" class="type-chip" data-type="focus"><i></i>Focus</button>
+        <button type="button" class="type-chip" data-type="personal"><i></i>Personal</button>
+        <button type="button" class="type-chip" data-type="break"><i></i>Break</button>
+      </div>
+
+      <div class="field-row">
+        <label class="field"><span>Date</span><input type="date" id="evDate"></label>
+        <label class="field"><span>Start</span><input type="time" id="evStart" step="900"></label>
+        <label class="field"><span>End</span><input type="time" id="evEnd" step="900"></label>
+      </div>
+
+      <label class="field"><span>Location</span><input id="evLocation" placeholder="Room, link, or address" maxlength="120"></label>
+      <label class="field"><span>Notes</span><textarea id="evNotes" rows="3" placeholder="Agenda, links, thoughts…" maxlength="500"></textarea></label>
+
+      <footer class="editor-foot">
+        <button type="button" class="ghost-btn danger" id="deleteEvent">Delete</button>
+        <div class="foot-right">
+          <button type="button" class="ghost-btn" id="cancelEvent">Cancel</button>
+          <button type="submit" class="primary-btn">Save event</button>
+        </div>
+      </footer>
+    </form>
+  </div>
+
+  <div class="overlay focus-layer" id="focusLayer" hidden>
+    <div class="focus-panel" id="focusPanel" role="dialog" aria-modal="true" aria-label="Focus session">
+      <button type="button" class="icon-btn focus-close" id="focusClose" aria-label="Close focus timer">
+        <span data-icon="x" data-size="17"></span>
+      </button>
+      <div class="focus-kicker">Focus session</div>
+      <div class="focus-ring-wrap">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="focus-ring-track" cx="110" cy="110" r="98"></circle>
+          <circle class="focus-ring-bar" id="focusRing" cx="110" cy="110" r="98"></circle>
+        </svg>
+        <div class="focus-center">
+          <div class="focus-time" id="focusTime">25:00</div>
+          <div class="focus-sub" id="focusSub">ready when you are</div>
+        </div>
+      </div>
+      <input class="focus-label" id="focusLabel" placeholder="What are you focusing on?" maxlength="90" aria-label="Focus label">
+      <div class="focus-chips" id="focusChips" role="group" aria-label="Session length">
+        <button type="button" data-min="25">25</button>
+        <button type="button" data-min="50">50</button>
+        <button type="button" data-min="90">90</button>
+      </div>
+      <div class="focus-actions">
+        <button type="button" class="primary-btn" id="focusStart">Start focus</button>
+        <button type="button" class="ghost-btn" id="focusReset">Reset</button>
+      </div>
+      <div class="focus-note">Notifications muted · one thing at a time</div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
