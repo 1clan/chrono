@@ -1,5 +1,7 @@
 # Chrono
 
+**Live:** [1clan.github.io/chrono](https://1clan.github.io/chrono/)
+
 A calm, keyboard-first calendar workspace for focused work. Chrono is a single-page app with no build step and no server — open it and start shaping your week.
 
 ![Chrono](https://img.shields.io/badge/local--first-yes-c9f56d) ![No build](https://img.shields.io/badge/build-none-8b9cff)
@@ -67,6 +69,18 @@ A few useful starting points in `app.js`:
 - `seedDemo()` — the demo week and task list created on first launch.
 - `STORAGE_KEY` — change the `localStorage` namespace.
 - `styles.css` → `:root` — colors, accent, radii, and the `--hour-h` grid scale.
+
+## Deploying
+
+The live site is hosted on GitHub Pages at **https://1clan.github.io/chrono/**.
+
+Pushes to `main` deploy automatically through `.github/workflows/pages.yml` (GitHub Actions → Pages). To deploy your own copy:
+
+1. Fork or clone the repo.
+2. Push to `main`.
+3. In **Settings → Pages**, set the source to **GitHub Actions** if it is not already enabled.
+
+No build step is required — the repository root is the published site.
 
 ## Reset
 
